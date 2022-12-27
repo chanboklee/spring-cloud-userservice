@@ -1,12 +1,15 @@
 package com.lee.userservice.domain;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.UUID;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
 @Entity
 public class UserEntity {

@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +27,7 @@ public class UsersController {
 
     @GetMapping("/health_check")
     public String status(){
-        return "It's Working in User Service";
+        return String.format("It's Working in User Service on PORT %s", environment.getProperty("local.server.port"));
     }
 
     @GetMapping("/welcome")
@@ -46,4 +48,23 @@ public class UsersController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
     }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<ResponseUser>> getUsers(){
+        List<ResponseUser> result = userService.getUserByAll().stream().map(ResponseUser::new).collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId){
+        UserEntity userEntity = userService.getUserByUserId(userId);
+        ResponseUser responseUser = ResponseUser.builder()
+                .email(userEntity.getEmail())
+                .name(userEntity.getName())
+                .userId(userEntity.getUserId())
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(responseUser);
+    }
+
+
 }
