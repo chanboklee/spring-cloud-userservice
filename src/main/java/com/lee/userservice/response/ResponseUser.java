@@ -18,11 +18,11 @@ public class ResponseUser {
     private List<ResponseOrder> orders;
 
     @Builder
-    public ResponseUser(String email, String name, String userId) {
+    public ResponseUser(String email, String name, String userId, List<ResponseOrder> orders) {
         this.email = email;
         this.name = name;
         this.userId = userId;
-        orders = new ArrayList<>();
+        this.orders = orders;
     }
 
     public ResponseUser(UserEntity userEntity){

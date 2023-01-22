@@ -61,12 +61,12 @@ public class UsersController {
 
     @GetMapping("/users/{userId}")
     public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId){
-        UserEntity userEntity = userService.getUserByUserId(userId);
-        ResponseUser responseUser = ResponseUser.builder()
-                .email(userEntity.getEmail())
-                .name(userEntity.getName())
-                .userId(userEntity.getUserId())
-                .build();
+        ResponseUser responseUser = userService.getUserByUserId(userId);
+//        ResponseUser responseUser = ResponseUser.builder()
+//                .email(userEntity.getEmail())
+//                .name(userEntity.getName())
+//                .userId(userEntity.getUserId())
+//                .build();
         return ResponseEntity.status(HttpStatus.OK).body(responseUser);
     }
 
