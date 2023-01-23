@@ -6,7 +6,9 @@ import com.lee.userservice.repository.UserRepository;
 import com.lee.userservice.request.RequestUser;
 import com.lee.userservice.response.ResponseOrder;
 import com.lee.userservice.response.ResponseUser;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -22,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -66,8 +69,15 @@ public class UserServiceImpl implements UserService{
 //                .orders(orderListResponse.getBody())
 //                .build();
 
-//        2. Using a feign client
-        List<ResponseOrder> orderList = orderServiceClient.getOrders(userId);
+        /* 2. Using a feign client */
+        /* Feign exception handling */
+        List<ResponseOrder> orderList = null;
+        try {
+            orderList = orderServiceClient.getOrders(userId);
+        }catch (FeignException e){
+            log.error(e.getMessage());
+        }
+
         ResponseUser responseUser = ResponseUser.builder()
                 .email(userEntity.getEmail())
                 .name(userEntity.getName())

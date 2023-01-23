@@ -38,8 +38,14 @@ greeting:
 #  expiration_time: 86400000
 #  secret: user_token
 
+
 management:
   endpoints:
     web:
       exposure:
         include: refresh, health, beans, busrefresh
+
+# FeignClient Log
+logging:
+  level:
+    com.lee.userservice.client: DEBUG
