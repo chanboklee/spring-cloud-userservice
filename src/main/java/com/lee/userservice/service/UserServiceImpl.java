@@ -71,13 +71,7 @@ public class UserServiceImpl implements UserService{
 
         /* 2. Using a feign client */
         /* Feign exception handling */
-        List<ResponseOrder> orderList = null;
-        try {
-            orderList = orderServiceClient.getOrders(userId);
-        }catch (FeignException e){
-            log.error(e.getMessage());
-        }
-
+        List<ResponseOrder> orderList = orderServiceClient.getOrders(userId);
         ResponseUser responseUser = ResponseUser.builder()
                 .email(userEntity.getEmail())
                 .name(userEntity.getName())
