@@ -1,5 +1,6 @@
 package com.lee.userservice.service;
 
+import com.lee.userservice.client.OrderServiceClient;
 import com.lee.userservice.domain.UserEntity;
 import com.lee.userservice.repository.UserRepository;
 import com.lee.userservice.request.RequestUser;
@@ -31,6 +32,7 @@ public class UserServiceImpl implements UserService{
 
     private final RestTemplate restTemplate;
     private final Environment env;
+    private final OrderServiceClient orderServiceClient;
 
     @Transactional
     @Override
@@ -52,15 +54,25 @@ public class UserServiceImpl implements UserService{
             throw new UsernameNotFoundException("User not found");
         }
 
-        // String orderUrl = "http://127.0.0.1:8000/order-service/%s/orders";
-        String orderUrl = String.format(env.getProperty("order_service_url"), userId);
-        ResponseEntity<List<ResponseOrder>> orderListResponse = restTemplate.exchange(orderUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseOrder>>() {
-        });
+//        1. Using a RestTemplate
+//        String orderUrl = "http://127.0.0.1:8000/order-service/%s/orders";
+//        String orderUrl = String.format(env.getProperty("order_service_url"), userId);
+//        ResponseEntity<List<ResponseOrder>> orderListResponse = restTemplate.exchange(orderUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseOrder>>() {
+//        });
 
-        ResponseUser responseUser = ResponseUser.builder().email(userEntity.getEmail())
+//        ResponseUser responseUser = ResponseUser.builder().email(userEntity.getEmail())
+//                .name(userEntity.getName())
+//                .userId(userEntity.getUserId())
+//                .orders(orderListResponse.getBody())
+//                .build();
+
+//        2. Using a feign client
+        List<ResponseOrder> orderList = orderServiceClient.getOrders(userId);
+        ResponseUser responseUser = ResponseUser.builder()
+                .email(userEntity.getEmail())
                 .name(userEntity.getName())
                 .userId(userEntity.getUserId())
-                .orders(orderListResponse.getBody())
+                .orders(orderList)
                 .build();
 
         return responseUser;
